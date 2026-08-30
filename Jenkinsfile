@@ -126,7 +126,28 @@ pipeline {
                 '''
             }
         }
+
+        stage('Trivy Image Scan') {
+            steps {
+                sh '''
+                    echo "================================"
+                    echo " TRIVY DOCKER IMAGE SCAN"
+                    echo "================================"
+
+                    trivy image \
+                    --severity HIGH,CRITICAL \
+                    --exit-code 1 \
+                    devops-url-shortener-backend:latest
+
+                    trivy image \
+                    --severity HIGH,CRITICAL \
+                    --exit-code 1 \
+                    devops-url-shortener-frontend:latest
+                '''
+            }
+        }
     }
+
 
     post {
         success {
