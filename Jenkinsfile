@@ -63,6 +63,16 @@ pipeline {
             }
         }
 
+        stage('Backend Tests') {
+            steps {
+                sh '''
+                    pip install -r backend/requirements.txt
+                    pip install pytest
+                    PYTHONPATH=. pytest -v tests/
+                '''
+            }
+        }
+
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
@@ -72,6 +82,14 @@ pipeline {
                 }
             }
         }    
+
+        stage('SonarQube Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
 
         stage('Trivy Filesystem Scan') {
             steps {
