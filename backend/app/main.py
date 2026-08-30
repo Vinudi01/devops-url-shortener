@@ -4,7 +4,7 @@ import string
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import RedirectResponse
 
-from app.database import get_connection
+from backend.app.database import get_connection
 from app.models import URLCreate
 
 
