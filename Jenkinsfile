@@ -66,13 +66,16 @@ pipeline {
         stage('Backend Tests') {
             steps {
                 sh '''
-                    pip install -r backend/requirements.txt
-                    pip install pytest
-                    PYTHONPATH=. pytest -v tests/
+                    python3 -m venv .venv
+
+                    .venv/bin/pip install --upgrade pip
+                    .venv/bin/pip install -r backend/requirements.txt
+                    .venv/bin/pip install pytest
+
+                    PYTHONPATH=. .venv/bin/pytest -v tests/
                 '''
             }
         }
-
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('SonarQube') {
