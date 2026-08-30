@@ -1,0 +1,88 @@
+services:
+
+  postgres:
+    image: postgres:17
+    container_name: url-shortener-db
+
+    environment:
+      POSTGRES_DB: urlshortener
+      POSTGRES_USER: urluser
+      POSTGRES_PASSWORD: urlpassword
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    networks:
+      - url-network
+
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+
+    container_name: url-shortener-backend
+
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      POSTGRES_DB: urlshortener
+      POSTGRES_USER: urluser
+      POSTGRES_PASSWORD: urlpassword
+
+    depends_on:
+      - postgres
+
+    expose:
+      - "8000"
+
+    networks:
+      - url-network
+
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+
+    container_name: url-shortener-frontend
+
+    depends_on:
+      - backend
+
+    expose:
+      - "5173"
+
+    networks:
+      - url-network
+
+
+  nginx:
+    image: nginx:alpine
+
+    container_name: url-shortener-nginx
+
+    ports:
+      - "80:80"
+
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+
+    depends_on:
+      - frontend
+      - backend
+
+    networks:
+      - url-network
+
+
+volumes:
+  postgres_data:
+
+
+networks:
+  url-network:
+    driver: bridge
