@@ -76,15 +76,24 @@ pipeline {
                 '''
             }
         }
+
         stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('Sonarqube') {
-                    sh '''
-                        sonar-scanner
-                    '''
+                    withCredentials([
+                        string(
+                            credentialsId: 'sonarqube',
+                            variable: 'SONAR_TOKEN'
+                        )
+                    ]) {
+                        sh '''
+                            sonar-scanner \
+                            -Dsonar.token="$SONAR_TOKEN"
+                        '''
+                    }
                 }
             }
-        }    
+        }   
 
         stage('SonarQube Quality Gate') {
             steps {
