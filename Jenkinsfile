@@ -70,6 +70,22 @@ pipeline {
                 '''
             }
         }
+
+        stage('Trivy Filesystem Scan') {
+            steps {
+                sh '''
+                    echo "================================"
+                    echo " TRIVY FILESYSTEM SECURITY SCAN"
+                    echo "================================"
+
+                    trivy fs \
+                    --scanners vuln,secret \
+                    --severity HIGH,CRITICAL \
+                    --exit-code 1 \
+                    .
+                '''
+            }
+        }
     }
 
     post {
