@@ -1,12 +1,26 @@
+FROM python:3.13-slim AS builder
+
+WORKDIR /build
+
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir --prefix=/install -r requirements.txt
+
+
 FROM python:3.13-slim
 
 WORKDIR /app
 
-COPY requirements.txt .
+RUN apt-get update && apt-get upgrade -y && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir -r requirements.txt
+COPY --from=builder /install /usr/local
 
-COPY backend/app ./app
+COPY app ./app
+
+RUN useradd --create-home --shell /usr/sbin/nologin appuser \
+    && chown -R appuser:appuser /app
+
+USER appuser
 
 EXPOSE 8000
 
