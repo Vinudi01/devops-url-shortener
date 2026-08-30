@@ -63,14 +63,6 @@ pipeline {
             }
         }
 
-        stage('Docker Build') {
-            steps {
-                sh '''
-                    docker compose build
-                '''
-            }
-        }
-
         stage('Trivy Filesystem Scan') {
             steps {
                 sh '''
@@ -83,6 +75,14 @@ pipeline {
                     --severity HIGH,CRITICAL \
                     --exit-code 1 \
                     .
+                '''
+            }
+        }
+
+        stage('Docker Build') {
+            steps {
+                sh '''
+                    docker compose build
                 '''
             }
         }
