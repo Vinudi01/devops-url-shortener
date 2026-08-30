@@ -5,7 +5,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import RedirectResponse
 
 from backend.app.database import get_connection
-from app.models import URLCreate
+from backend.app.models import URLCreate
 
 
 app = FastAPI(title="DevOps URL Shortener")
