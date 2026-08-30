@@ -21,3 +21,4 @@ dist/
 
 #
 trivy.txt
+.scannerwork/

@@ -63,6 +63,16 @@ pipeline {
             }
         }
 
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv('SonarQube') {
+                    sh '''
+                        sonar-scanner
+                    '''
+                }
+            }
+        }    
+
         stage('Trivy Filesystem Scan') {
             steps {
                 sh '''
